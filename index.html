@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Time and Play Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #time {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        #playButton {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="time"></div>
+    <button id="playButton" onclick="playGames()">Play some games</button>
+
+    <script>
+        function updateTime() {
+            const timeElement = document.getElementById('time');
+            const now = new Date();
+            timeElement.textContent = now.toLocaleTimeString();
+        }
+
+        function playGames() {
+            alert("Let's play some games!");
+            // You can redirect to a games page or perform any other action here
+        }
+
+        // Update the time every second
+        setInterval(updateTime, 1000);
+
+        // Initial time update
+        updateTime();
+    </script>
+</body>
+</html>
