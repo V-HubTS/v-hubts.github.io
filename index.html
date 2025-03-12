@@ -1,178 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Local Time and Play Games</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Comic Sans MS', sans-serif;
-            text-align: center;
-            background: linear-gradient(to bottom, white, red);
-            background-size: 150% 150%;
-            animation: gradientFlow 10s ease infinite;
-        }
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        #content {
-            margin-top: 50px;
-            position: relative;
-        }
-        #time {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-        #playButton,
-        #visitButton {
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .battery {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .battery-icon {
-            width: 30px;
-            height: 60px;
-            border: 3px solid black;
-            border-radius: 5px;
-            position: relative;
-            margin-right: 10px;
-        }
-        .battery-icon::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            background-color: black;
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            border-radius: 2px;
-        }
-        .battery-level {
-            height: 100%;
-            width: 0;
-            background-color: green;
-        }
-        .ripple {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            animation: rippleAnimation 3s infinite;
-            transform: translate(-50%, -50%);
-        }
-        @keyframes rippleAnimation {
-            0% { width: 20px; height: 20px; opacity: 1; }
-            100% { width: 300px; height: 300px; opacity: 0; }
-        }
-        #searchBar {
-            margin-top: 20px;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 25px; /* Added to make it rounded */
-            width: 80%;
-            font-size: 1em;
-            transition: border-color 0.3s; /* Smooth transition for border color */
-        }
-        #searchBar:focus {
-            border-color: #333; /* Darker border on focus */
-            outline: none; /* Remove default outline */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-Hub.TS</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to bottom, #00ffcc, #0066ff);
+      overflow: hidden;
+    }
+    .clock-container {
+      position: relative;
+      font-family: 'Arial', sans-serif;
+      font-size: 48px;
+      color: white;
+      text-align: center;
+    }
+    #currently-empty-text {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .ripple {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: ripple-animation 3s infinite ease-out;
+    }
+    @keyframes ripple-animation {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #0055ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="clock-container">
     <div class="ripple"></div>
-    <div id="content">
-        <div id="time"></div>
-        <button id="playButton" onclick="playGames()">Play some games</button>
-        <button id="visitButton" onclick="visitVHub()">Visit V-Hub.TS</button>
-        <div class="battery">
-            <div class="battery-icon">
-                <div class="battery-level" id="battery-level"></div>
-            </div>
-            <div id="battery-percentage"></div>
-        </div>
-        <input type="text" id="searchBar" placeholder="Enter a link or search query" onkeypress="handleKeyPress(event)">
+    <div id="time"></div>
+    <div id="currently-empty-text">Currently empty text</div>
+    <div class="button-container">
+      <a href="https://v-hubts.github.io/3kh0" class="button">Play 3kh0</a>
+      <a href="https://sites.google.com/view/v-hubts" class="button">V-Hub.TS</a>
     </div>
+  </div>
+  <canvas id="canvas"></canvas>
+  <script>
+    // Update clock function
+    function updateClock() {
+      const timeElement = document.getElementById('time');
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      hours = hours % 12 || 12; // Convert to 12-hour format
+      timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+    }
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            const currentTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+    setInterval(updateClock, 1000);
+    updateClock();
 
-            document.getElementById('time').innerText = currentTime;
+    // Particle setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particlesArray = [];
+    const numberOfParticles = 100;
+    const maxConnectionDistance = 100;
+    let mouse = {
+      x: null,
+      y: null,
+      radius: 150
+    };
+
+    window.addEventListener('mousemove', function(event) {
+      mouse.x = event.x;
+      mouse.y = event.y;
+    });
+
+    class Particle {
+      constructor(x, y, directionX, directionY, size, color) {
+        this.x = x;
+        this.y = y;
+        this.directionX = directionX;
+        this.directionY = directionY;
+        this.size = size;
+        this.color = color;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+
+      update() {
+        // Check for cursor collision
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < mouse.radius + this.size) {
+          if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+            this.x += 10;
+          }
+          if (mouse.x > this.x && this.x > this.size * 10) {
+            this.x -= 10;
+          }
+          if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+            this.y += 10;
+          }
+          if (mouse.y > this.y && this.y > this.size * 10) {
+            this.y -= 10;
+          }
         }
 
-        function playGames() {
-            window.location.href = "https://v-hubts.github.io/3kh0.html";
+        // Move particle
+        this.x += this.directionX;
+        this.y += this.directionY;
+
+        // Check for edge collision
+        if (this.x > canvas.width || this.x < 0) {
+          this.directionX = -this.directionX;
+        }
+        if (this.y > canvas.height || this.y < 0) {
+          this.directionY = -this.directionY;
         }
 
-        function visitVHub() {
-            window.location.href = "https://v-hubts.github.io";
+        this.draw();
+      }
+    }
+
+    function init() {
+      particlesArray.length = 0;
+      for (let i = 0; i < numberOfParticles; i++) {
+        const size = Math.random() * 5 + 1;
+        const x = Math.random() * (innerWidth - size * 2) + size;
+        const y = Math.random() * (innerHeight - size * 2) + size;
+        const directionX = (Math.random() * 0.4) - 0.2;
+        const directionY = (Math.random() * 0.4) - 0.2;
+        const color = 'gold';
+
+        particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+      }
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+          const dx = particlesArray[a].x - particlesArray[b].x;
+          const dy = particlesArray[a].y - particlesArray[b].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < maxConnectionDistance) {
+            ctx.strokeStyle = 'rgba(255, 215, 0, ' + (1 - distance / maxConnectionDistance) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+            ctx.stroke();
+          }
         }
+      }
+    }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                const query = event.target.value;
-                if (query.startsWith('https://')) {
-                    window.location.href = query;
-                } else {
-                    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                }
-            }
-        }
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+      }
+      connectParticles();
+    }
 
-        function updateBatteryStatus(battery) {
-            const level = battery.level * 100;
-            const batteryLevelDiv = document.getElementById('battery-level');
-            const batteryPercentageDiv = document.getElementById('battery-percentage');
-            batteryLevelDiv.style.width = level + '%';
-            batteryPercentageDiv.innerText = Math.round(level) + '%';
-
-            if (level > 50) {
-                batteryLevelDiv.style.backgroundColor = 'green';
-            } else if (level > 20) {
-                batteryLevelDiv.style.backgroundColor = 'yellow';
-            } else {
-                batteryLevelDiv.style.backgroundColor = 'red';
-            }
-        }
-
-        navigator.getBattery().then((battery) => {
-            updateBatteryStatus(battery);
-            battery.addEventListener('levelchange', () => {
-                updateBatteryStatus(battery);
-            });
-        });
-
-        // Update the time every second
-        setInterval(updateTime, 1000);
-
-        // Initial time update
-        updateTime();
-    </script>
+    init();
+    animate();
+  </script>
 </body>
 </html>
