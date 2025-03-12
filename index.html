@@ -13,6 +13,7 @@
       margin: 0;
       background: linear-gradient(to bottom, #00ffcc, #0066ff);
       overflow: hidden;
+      flex-direction: column; /* Ensure vertical centering */
     }
     .clock-container {
       position: relative;
@@ -20,9 +21,10 @@
       font-size: 48px;
       color: white;
       text-align: center;
+      margin-bottom: 40px; /* Add some space between text and buttons */
     }
     #currently-empty-text {
-      font-size: 24px;
+      font-size: 12px;
       margin-top: 10px;
     }
     canvas {
@@ -55,10 +57,21 @@
       display: flex;
       justify-content: center;
       gap: 20px;
+      position: relative;
+      z-index: 10; /* Ensure buttons are above the particles */
+    }
+    .button-box {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+      border-radius: 10px;
     }
     .button {
       padding: 10px 20px;
-      font-size: 18px;
+      font-size: 18px; /* Reduced from 36px to 18px */
       background-color: #0055ff;
       color: white;
       border: none;
@@ -72,10 +85,12 @@
   <div class="clock-container">
     <div class="ripple"></div>
     <div id="time"></div>
-    <div id="Welcome to V-Hub.TS">Welcome to V-Hub.TS</div>
+    <div id="Welcome to V-Hub.TS" style="font-size: 24px;">Welcome to V-Hub.TS</div>
+  </div>
+  <div class="button-box">
     <div class="button-container">
-      <button class="button" onclick="play3kh0()">Play 3kh0</button>
-      <button class="button" onclick="goToVHUB()">V-Hub.TS</button>
+      <a href="https://v-hubts.github.io/3kh0" class="button">Play 3kh0</a>
+      <a href="https://sites.google.com/view/v-hubts" class="button">V-Hub.TS</a>
     </div>
   </div>
   <canvas id="canvas"></canvas>
@@ -193,7 +208,7 @@
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-            ctx.lineTo(particlesArray[b].x, particlesArray[b.y);
+            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
             ctx.stroke();
           }
         }
@@ -207,14 +222,6 @@
         particlesArray[i].update();
       }
       connectParticles();
-    }
-
-    function play3kh0() {
-      window.location.href = 'https://v-hubts.github.io/3kh0';
-    }
-
-    function goToVHUB() {
-      window.location.href = 'https://sites.google.com/view/v-hubts';
     }
 
     init();
