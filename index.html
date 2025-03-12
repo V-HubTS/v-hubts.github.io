@@ -74,8 +74,8 @@
     <div id="time"></div>
     <div id="Welcome to V-Hub.TS">Welcome to V-Hub.TS</div>
     <div class="button-container">
-      <a href="https://v-hubts.github.io/3kh0" class="button">Play 3kh0</a>
-      <a href="https://sites.google.com/view/v-hubts" class="button">V-Hub.TS</a>
+      <button class="button" onclick="play3kh0()">Play 3kh0</button>
+      <button class="button" onclick="goToVHUB()">V-Hub.TS</button>
     </div>
   </div>
   <canvas id="canvas"></canvas>
@@ -193,7 +193,7 @@
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+            ctx.lineTo(particlesArray[b].x, particlesArray[b.y);
             ctx.stroke();
           }
         }
@@ -207,6 +207,14 @@
         particlesArray[i].update();
       }
       connectParticles();
+    }
+
+    function play3kh0() {
+      window.location.href = 'https://v-hubts.github.io/3kh0';
+    }
+
+    function goToVHUB() {
+      window.location.href = 'https://sites.google.com/view/v-hubts';
     }
 
     init();
