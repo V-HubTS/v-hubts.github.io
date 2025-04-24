@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>v-TS Version 1.2</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <style>
+        /* Full-screen particle effect */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #444; /* Gray background */
+        }
+
+        #container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        #browser {
+            width: 95%;
+            height: 85vh;
+            border: 2px solid #666;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        #address-bar {
+            padding: 10px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #666;
+        }
+        
+        #address-bar input {
+            width: 75%;
+            padding: 10px;
+            font-size: 16px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        
+        #go-button, #fullscreen-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: white;
+            background: #0078d7;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        #go-button:hover, #fullscreen-button:hover {
+            background: #005ea6;
+        }
+
+        #content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div> <!-- Particles.js background -->
+    
+    <div id="container">
+        <div id="browser">
+            <div id="address-bar">
+                <input type="text" id="url-input" placeholder="Enter URL" autofocus>
+                <button id="go-button">Go</button>
+                <button id="fullscreen-button">Fullscreen</button>
+            </div>
+            <div id="content">
+                <span id="placeholder-text">V-Hub.TS V.12</span>
+                <iframe id="web-view"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load particles.js with a default particle configuration
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 100 },
+                size: { value: 3 },
+                move: { speed: 1 },
+                color: { value: "#ffffff" }, // White particles
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 }
+            },
+            interactivity: {
+                events: { onhover: { enable: true, mode: "repulse" } }
+            }
+        });
+
+        const urlInput = document.getElementById('url-input');
+        const goButton = document.getElementById('go-button');
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        const webView = document.getElementById('web-view');
+        const placeholderText = document.getElementById('placeholder-text');
+        const browser = document.getElementById('browser');
+
+        webView.setAttribute('lang', 'en');
+
+        const loadWebsite = () => {
+            const url = urlInput.value;
+            const proxyUrl = '/proxy?quest=' + encodeURIComponent(url); // Using local proxy service
+
+            fetch(proxyUrl)
+                .then(response => response.text())
+                .then(content => {
+                    webView.srcdoc = content;
+                    urlInput.value = url;
+                    webView.style.display = "block";
+                    placeholderText.style.display = "none";
+                })
+                .catch(error => {
+                    console.error('Error fetching website:', error);
+                });
+        };
+
+        goButton.addEventListener('click', loadWebsite);
+        urlInput.addEventListener('keypress', event => {
+            if (event.key === 'Enter') {
+                loadWebsite();
+            }
+        });
+
+        fullscreenButton.addEventListener('click', () => {
+            if (browser.requestFullscreen) {
+                browser.requestFullscreen();
+            } else if (browser.mozRequestFullScreen) { /* Firefox */
+                browser.mozRequestFullScreen();
+            } else if (browser.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                browser.webkitRequestFullscreen();
+            } else if (browser.msRequestFullscreen) { /* IE/Edge */
+                browser.msRequestFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>
