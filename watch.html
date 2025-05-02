@@ -1,1 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VHT Watch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comfortaa', sans-serif;
+            background: linear-gradient(135deg, #32cd32, #ffdb58);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 300px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            gap: 20px;
+        }
+        .video-frame {
+            flex: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        video {
+            border-radius: 8px;
+            object-fit: contain;
+            width: 192px;
+            height: 192px;
+        }
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            width: 80px;
+            height: 80px;
+        }
+        .controls:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .controls p {
+            color: white;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="video-frame">
+            <video id="videoPlayer" controls>
+                <source id="videoSource" src="https://v-hubts.github.io/video/01.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="controls" onclick="nextVideo()">
+            <p>Press for next video</p>
+        </div>
+    </div>
+
+    <script>
+        function nextVideo() {
+            let videoElement = document.getElementById("videoSource");
+            let currentSrc = videoElement.src;
+            let match = currentSrc.match(/(\d+)\.mp4$/);
+
+            if (match) {
+                let currentNumber = parseInt(match[1], 10);
+                let nextNumber = currentNumber + 1;
+                let nextFilename = String(nextNumber).padStart(2, '0') + ".mp4";
+                let newSrc = currentSrc.replace(/\d+\.mp4$/, nextFilename);
+
+                videoElement.src = newSrc;
+                document.getElementById("videoPlayer").load();
+            }
+        }
+    </script>
+
+</body>
+</html>
 
